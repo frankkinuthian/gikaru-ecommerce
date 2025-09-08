@@ -337,6 +337,41 @@ export type PRODUCT_ID_BY_QUERYResult = {
   stock?: number;
 } | null;
 
+// Source: ./sanity/lib/products/getProductsByCategory.ts
+// Variable: PRODUCTS_BY_CATEGORY_QUERY
+// Query: *[       _type == "product" &&        references(*[_type == "category" && slug.current == $categorySlug]._id)    ] | order(name asc)
+export type PRODUCTS_BY_CATEGORY_QUERYResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  description?: BlockContent;
+  price?: number;
+  categories?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "category";
+  }>;
+  stock?: number;
+}>;
+
 // Source: ./sanity/lib/products/searchProductsByName.ts
 // Variable: PRODUCT_SEARCH_QUERY
 // Query: *[    _type == "product"    && name match $searchParam    ] | order(name asc)
@@ -397,6 +432,7 @@ declare module "@sanity/client" {
     "*[_type == \"category\"] | order(name asc)": ALL_CATEGORIES_QUERYResult;
     "*[_type == \"product\"] | order(name asc)": ALL_PRODUCTS_QUERYResult;
     "\n        *[\n           _type == \"product\" &&\n           slug.current == $slug\n        ] | order(name asc) [0]\n        ": PRODUCT_ID_BY_QUERYResult;
+    "\n    *[\n       _type == \"product\" && \n       references(*[_type == \"category\" && slug.current == $categorySlug]._id)\n    ] | order(name asc)\n    ": PRODUCTS_BY_CATEGORY_QUERYResult;
     "\n    *[\n    _type == \"product\"\n    && name match $searchParam\n    ] | order(name asc)\n    ": PRODUCT_SEARCH_QUERYResult;
     "\n        *[\n        _type == \"sale\" \n        && isActive == true\n        && couponCode == $couponCode\n    ] | order(validFrom desc)[0]\n    ": ACTIVE_SALE_BY_COUPON_QUERYResult;
   }
