@@ -11,9 +11,13 @@ import {
 import Link from "next/link";
 import Form from "next/form";
 import { TrolleyIcon, PackageIcon, SearchIcon } from "@sanity/icons";
+import useBasketStore from "@/store/store";
 
 function Header() {
   const { user } = useUser();
+  const itemCount = useBasketStore((state) =>
+    state.items.reduce((total, item) => total + item.quantity, 0)
+  );
 
   const createClerkPasskey = async () => {
     try {
@@ -61,9 +65,17 @@ function Header() {
             {/* Basket */}
             <Link
               href="/basket"
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+              className="relative flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium"
             >
               <TrolleyIcon className="w-5 h-5" />
+
+              <span
+                className="absolute -top-2 -right-2 bg-red-500 text-white 
+              rounded-full w-5 h-5 flex items-center justify-center text-xs
+              "
+              >
+                {itemCount}
+              </span>
               <span className="hidden sm:inline">Basket</span>
             </Link>
 
